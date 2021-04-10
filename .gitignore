@@ -1,0 +1,30 @@
+app_config.json
+
+*/.serverless
+infra/cdk.out
+
+# OS and IDE
+.DS_Store
+.idea/
+
+# Python
+.python-version
+
+*.pyc
+__pycache__/
+
+instance/
+
+.pytest_cache/
+.coverage
+htmlcov/
+
+dist/
+build/
+*.egg-info/
+*.eggs
+
+*/.tox
+
+# Node
+node_modules/
