@@ -13,18 +13,18 @@ class DiscordCommand:
 
 
 def command_from_data(event_data):
-    if event_data['name'] == "guess":
-        return _guess_command_from_data(event_data)
+    if event_data['name'] == "roll":
+        options_data = event_data['options'][0]['options']
+        options = {}
+        for option in options_data:
+            options[option['name']] = option['value']
 
-    if event_data['name'] == "eternal-guess":
-        if event_data['options'][0]['name'] == "create":
-            return _create_command_from_data(event_data)
-
-        if event_data['options'][0]['name'] == "admin":
-            return _admin_or_manage_command_from_data(event_data)
-
-        if event_data['options'][0]['name'] == "manage":
-            return _admin_or_manage_command_from_data(event_data)
+        return DiscordCommand(
+            command_id=event_data['id'],
+            command_name=event_data['name'],
+            subcommand_name=event_data['options'][0]['name'],
+            options=options,
+        )
 
     raise UnknownCommandError(event_data)
 
@@ -71,4 +71,4 @@ def _admin_or_manage_command_from_data(event_data: Dict) -> DiscordCommand:
 
 class UnknownCommandError(Exception):
     def __init__(self, event_data):
-        super(f"Could not handle unknown command:\n{event_data}")
+        super().__init__(f"Could not handle unknown command:\n{event_data}")

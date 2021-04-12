@@ -7,6 +7,7 @@ from discord_bot_eternal_dice.model.discord_event import DiscordEvent, CommandTy
 from discord_bot_eternal_dice.model.discord_response import DiscordResponse
 from discord_bot_eternal_dice.model.lambda_response import LambdaResponse
 from discord_bot_eternal_dice.routes.ping import PingRoute
+from discord_bot_eternal_dice.routes.roll import RollRoute
 
 
 class UnknownEventException(Exception):
@@ -26,8 +27,9 @@ class Router(ABC):
 
 
 class RouterImpl(Router):
-    def __init__(self, ping_route: PingRoute):
+    def __init__(self, ping_route: PingRoute = None, roll_route: RollRoute = None):
         self.ping_route = ping_route
+        self.roll_route = roll_route
 
     async def route(self, event: DiscordEvent) -> LambdaResponse:
         if event.type is CommandType.PING:
@@ -47,4 +49,8 @@ class RouterImpl(Router):
         raise UnknownEventException(event)
 
     async def _handle_command(self, event: DiscordEvent) -> DiscordResponse:
-        pass
+        if event.command.command_name == 'roll':
+            if event.command.subcommand_name == 'number':
+                return await self.roll_route.number(event)
+            if event.command.subcommand_name == 'dice':
+                return await self.roll_route.dice(event)
