@@ -48,8 +48,8 @@ jobs:
         run: cd infra && poetry install
         if: steps.cached-infra-poetry.outputs.cache-hit != 'true'
 
-      - name: Flake8
-        run: cd discord_bot_eternal_dice && poetry run flake8 --config ../.flake8 ./tests ./discord_bot_eternal_dice ../error_handler ../infra
+      - name: Code Quality
+        run: make quality
 
       - name: Pytest
         run: cd discord_bot_eternal_dice && poetry run pytest --cov=discord_bot_eternal_dice --cov-report=xml

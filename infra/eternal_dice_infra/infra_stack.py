@@ -23,14 +23,15 @@ class InfraStack(core.Stack):
             'LOGURU_LEVEL': self.config['APP_LOG_LEVEL'],
         }
 
-        return aws_lambda.Function(self, "DiscordAppFunction",
-                                   runtime=aws_lambda.Runtime.PYTHON_3_8,
-                                   timeout=core.Duration.seconds(10),
-                                   memory_size=1024,
-                                   code=aws_lambda.Code.from_asset("../discord_bot_eternal_dice/.build/discord_bot_eternal_dice.zip"),
-                                   handler="discord_bot_eternal_dice.handler.handle_lambda",
-                                   environment=environment
-                                   )
+        return aws_lambda.Function(
+            self, "DiscordAppFunction",
+            runtime=aws_lambda.Runtime.PYTHON_3_8,
+            timeout=core.Duration.seconds(10),
+            memory_size=1024,
+            code=aws_lambda.Code.from_asset("../discord_bot_eternal_dice/.build/discord_bot_eternal_dice.zip"),
+            handler="discord_bot_eternal_dice.handler.handle_lambda",
+            environment=environment
+        )
 
     def create_logs_handler(self, topic: Topic) -> Function:
         code_asset = aws_lambda.Code.from_asset("../error_handler/.build/error_handler.zip")
@@ -38,11 +39,13 @@ class InfraStack(core.Stack):
             'snsARN': topic.topic_arn,
         }
 
-        logs_handler = aws_lambda.Function(self, "eternal-guess-logs-parser",
-                                           runtime=aws_lambda.Runtime.PYTHON_3_7,
-                                           code=code_asset,
-                                           handler="parser.lambda_handler",
-                                           environment=environment)
+        logs_handler = aws_lambda.Function(
+            self, "eternal-guess-logs-parser",
+            runtime=aws_lambda.Runtime.PYTHON_3_7,
+            code=code_asset,
+            handler="parser.lambda_handler",
+            environment=environment
+        )
 
         topic.grant_publish(logs_handler)
 
