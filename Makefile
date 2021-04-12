@@ -19,12 +19,13 @@ package:
 		cp -r discord_bot_eternal_dice .build/bundle/ && \
 		poetry export -f requirements.txt --without-hashes > .build/requirements.txt && \
 		pip install -r .build/requirements.txt -t .build/bundle/ && \
-		rm .build/discord_bot_eternal_dice.zip && \
+		rm .build/discord_bot_eternal_dice.zip || true && \
 		cd .build/bundle/ && \
 		zip --verbose ../discord_bot_eternal_dice.zip *
 
 	cd ${ERROR_HANDLER_DIR} && \
 		mkdir .build || true && \
+		rm .build/error_handler.zip || true && \
 		zip .build/error_handler.zip parser.py
 
 bootstrap: # Bootstraps an account for CDK deployments
