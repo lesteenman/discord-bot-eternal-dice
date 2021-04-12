@@ -89,7 +89,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: discord_bot_eternal_dice_package
-          path: discord_bot_eternal_dice_package/.build/discord_bot_eternal_dice.zip
+          path: discord_bot_eternal_dice/.build/discord_bot_eternal_dice.zip
 
       - name: Create artifact for the error_handler
         uses: actions/upload-artifact@v2
@@ -116,7 +116,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: discord_bot_eternal_dice_package
-          path: discord_bot_eternal_dice_package/.build/
+          path: discord_bot_eternal_dice/.build/
 
       - name: Restore the artifact for the error-parser
         uses: actions/download-artifact@v2
