@@ -1,5 +1,4 @@
-from aws_cdk import (core, aws_lambda, aws_apigateway, aws_dynamodb, aws_sns, aws_logs, aws_logs_destinations)
-from aws_cdk.aws_dynamodb import ITable
+from aws_cdk import (core, aws_lambda, aws_apigateway, aws_sns, aws_logs, aws_logs_destinations)
 from aws_cdk.aws_lambda import Function
 from aws_cdk.aws_sns import Topic
 
@@ -14,25 +13,8 @@ class InfraStack(core.Stack):
         self.config = config.config
         self.create_discord_slash_commands()
         self.discord_bot_handler = self.create_app_handler()
-        self.create_api()
         self.create_error_handler()
-
-    def create_table(self) -> aws_dynamodb.ITable:
-        partition_key = aws_dynamodb.Attribute(
-            name="pk",
-            type=aws_dynamodb.AttributeType.STRING
-        )
-
-        sort_key = aws_dynamodb.Attribute(
-            name="sk",
-            type=aws_dynamodb.AttributeType.STRING
-        )
-
-        return aws_dynamodb.Table(self, "EternalGuessesTable",
-                                  partition_key=partition_key,
-                                  sort_key=sort_key,
-                                  billing_mode=aws_dynamodb.BillingMode.PAY_PER_REQUEST
-                                  )
+        self.create_api()
 
     def create_app_handler(self) -> Function:
         environment = {
@@ -45,14 +27,26 @@ class InfraStack(core.Stack):
                                    runtime=aws_lambda.Runtime.PYTHON_3_8,
                                    timeout=core.Duration.seconds(10),
                                    memory_size=1024,
-                                   code=aws_lambda.Code.from_asset("../discord_app/.serverless/discord-app.zip"),
-                                   handler="eternal_guesses.handler.handle_lambda",
+                                   code=aws_lambda.Code.from_asset("../discord_bot_eternal_dice/.build/discord_bot_eternal_dice.zip"),
+                                   handler="discord_bot_eternal_dice.handler.handle_lambda",
                                    environment=environment
                                    )
 
-    def grant_table_readwrite_permissions(self, dynamodb_table: ITable, function: Function):
-        dynamodb_table.grant_full_access(function)
-        # dynamodb_table.grant(function, "dynamodb:DescribeTable")
+    def create_logs_handler(self, topic: Topic) -> Function:
+        code_asset = aws_lambda.Code.from_asset("../error_handler/.build/error_handler.zip")
+        environment = {
+            'snsARN': topic.topic_arn,
+        }
+
+        logs_handler = aws_lambda.Function(self, "eternal-guess-logs-parser",
+                                           runtime=aws_lambda.Runtime.PYTHON_3_7,
+                                           code=code_asset,
+                                           handler="parser.lambda_handler",
+                                           environment=environment)
+
+        topic.grant_publish(logs_handler)
+
+        return logs_handler
 
     def create_api(self):
         api = aws_apigateway.RestApi(self, "eternal-guesses-api",
@@ -77,22 +71,6 @@ class InfraStack(core.Stack):
                              topic=sns_topic,
                              protocol=aws_sns.SubscriptionProtocol.EMAIL,
                              endpoint=email_address)
-
-    def create_logs_handler(self, topic: Topic) -> Function:
-        code_asset = aws_lambda.Code.from_asset("../error_parser_function/.serverless/error-parser.zip")
-        environment = {
-            'snsARN': topic.topic_arn,
-        }
-
-        logs_handler = aws_lambda.Function(self, "eternal-guess-logs-parser",
-                                           runtime=aws_lambda.Runtime.PYTHON_3_7,
-                                           code=code_asset,
-                                           handler="parser.lambda_handler",
-                                           environment=environment)
-
-        topic.grant_publish(logs_handler)
-
-        return logs_handler
 
     def subscribe_handler_to_function_logs(self, app_handler, logs_handler):
         aws_logs.SubscriptionFilter(self, "eternal-guess-handler-subscription-filter",

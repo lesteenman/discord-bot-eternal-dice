@@ -6,6 +6,6 @@ from eternal_dice_infra.infra_stack import InfraStack
 
 
 app = core.App()
-InfraStack(app, "eternal_dice_infra")
+InfraStack(app, "discord-bot-eternal-dice")
 
 app.synth()

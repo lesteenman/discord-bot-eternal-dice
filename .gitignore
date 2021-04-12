@@ -1,6 +1,6 @@
 app_config.json
 
-*/.serverless
+*/.build
 infra/cdk.out
 
 # OS and IDE
