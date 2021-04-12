@@ -72,5 +72,3 @@ def test_roll_result(expression: str, min_result: int, max_result: int):
 
         # Then
         assert min_result <= roll.result <= max_result
-
-

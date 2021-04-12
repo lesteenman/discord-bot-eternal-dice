@@ -80,5 +80,3 @@ class DiceRollerImpl(DiceRoller):
                 value = -value
 
             dice_roll.add(StaticPartial(value))
-
-
