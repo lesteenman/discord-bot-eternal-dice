@@ -94,7 +94,7 @@ async def test_roll_dice():
     dice_expression = "1d6+100"
     generated_message = "Charles rolled 1d6+100: it's a 6!"
 
-    dice_roll = DiceRoll()
+    dice_roll = DiceRoll(dice_expression)
 
     mock_message_provider = MagicMock(MessageProvider)
     mock_message_provider.roll_dice.return_value = generated_message

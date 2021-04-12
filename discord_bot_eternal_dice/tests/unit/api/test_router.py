@@ -23,7 +23,10 @@ async def test_handle_ping():
     mock_ping_route.call.return_value = pong_response
 
     # When
-    router = RouterImpl(ping_route=mock_ping_route)
+    router = RouterImpl(
+        ping_route=mock_ping_route,
+        roll_route=AsyncMock(RollRoute),
+    )
     response = await router.route(event)
 
     # Then
@@ -48,7 +51,7 @@ async def test_handle_roll_number():
         )
     )
 
-    router = RouterImpl(roll_route=mock_roll_route)
+    router = RouterImpl(ping_route=AsyncMock(PingRoute), roll_route=mock_roll_route)
     response = await router.route(event)
 
     # Then
@@ -73,7 +76,7 @@ async def test_handle_roll_dice():
         )
     )
 
-    router = RouterImpl(roll_route=mock_roll_route)
+    router = RouterImpl(ping_route=AsyncMock(PingRoute), roll_route=mock_roll_route)
     response = await router.route(event)
 
     # Then

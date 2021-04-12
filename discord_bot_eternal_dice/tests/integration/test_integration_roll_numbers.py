@@ -25,6 +25,9 @@ def test_integration_roll_numbers():
     roll_random_number(1, 5)
 
     # Try a few sets of dice
+    roll_dice("1d20")
+    roll_dice("d10")
+    roll_dice("5d20+6d6+18-1d100")
 
 
 def roll_random_number(min_roll: int, max_roll: int):
@@ -47,7 +50,22 @@ def roll_random_number(min_roll: int, max_roll: int):
 
     assert response['statusCode'] == 200
 
-    print(response['body'])
+
+def roll_dice(expression: str):
+    response = handler.handle_lambda(
+        make_discord_event(
+            roll_type="dice",
+            options=[
+                {
+                    "name": "expression",
+                    "value": expression,
+                },
+            ],
+        ),
+        create_context()
+    )
+
+    assert response['statusCode'] == 200
 
 
 def make_discord_event(roll_type: str, options: typing.List, guild_id: int = DEFAULT_GUILD_ID,
