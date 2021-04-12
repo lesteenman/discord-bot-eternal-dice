@@ -118,10 +118,10 @@ jobs:
           name: discord_bot_eternal_dice_package
           path: discord_bot_eternal_dice/.build/
 
-      - name: Restore the artifact for the error-parser
+      - name: Restore the artifact for the error_handler
         uses: actions/download-artifact@v2
         with:
-          name: error-parser-package
+          name: error_handler_package
           path: error_handler/.build/
 
       - name: Install Python 3.8
