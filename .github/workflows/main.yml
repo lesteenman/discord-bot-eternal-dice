@@ -54,6 +54,34 @@ jobs:
       - name: Pytest
         run: cd discord_bot_eternal_dice && poetry run pytest --cov=discord_bot_eternal_dice --cov-report=xml
 
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Python 3.8
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+
+      - name: Install poetry
+        uses: snok/install-poetry@v1.0.0
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+
+      - name: Load cached venv for discord_bot_eternal_dice
+        id: cached-discord-bot-eternal-dice-poetry
+        uses: actions/cache@v2
+        with:
+          path: |
+            discord_bot_eternal_dice/.venv
+          key: venv-${{ runner.os }}-${{ hashFiles('discord_bot_eternal_dice/poetry.lock') }}
+
+      - name: Poetry install for discord_bot_eternal_dice/
+        run: cd discord_bot_eternal_dice && poetry install
+        if: steps.cached-discord-bot-eternal-dice-poetry.outputs.cache-hit != 'true'
+
       - name: Package projects
         run: make package
 
@@ -76,7 +104,9 @@ jobs:
           path: infra/
 
   deploy:
-    needs: build
+    needs:
+      - test
+      - build
     runs-on: ubuntu-latest
     environment: Production
     steps:
