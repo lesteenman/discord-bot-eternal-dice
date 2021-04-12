@@ -21,12 +21,12 @@ package:
 		pip install -r .build/requirements.txt -t .build/bundle/ && \
 		rm .build/discord_bot_eternal_dice.zip || true && \
 		cd .build/bundle/ && \
-		zip --verbose ../discord_bot_eternal_dice.zip *
+		zip -r --verbose ../discord_bot_eternal_dice.zip *
 
 	cd ${ERROR_HANDLER_DIR} && \
 		mkdir .build || true && \
 		rm .build/error_handler.zip || true && \
-		zip .build/error_handler.zip parser.py
+		zip -r .build/error_handler.zip parser.py
 
 bootstrap: # Bootstraps an account for CDK deployments
 	cd ${INFRA_DIR} && CDK_NEW_BOOTSTRAP=1 cdk bootstrap
