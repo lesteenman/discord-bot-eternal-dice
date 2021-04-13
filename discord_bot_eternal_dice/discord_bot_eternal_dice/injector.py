@@ -1,4 +1,4 @@
-from discord_bot_eternal_dice.api.api_authorizer import ApiAuthorizer
+from discord_bot_eternal_dice.api.api_authorizer import ApiAuthorizerImpl
 from discord_bot_eternal_dice.api.discord_event_handler import DiscordEventHandler
 from discord_bot_eternal_dice.api.router import Router, RouterImpl
 from discord_bot_eternal_dice.discord_messaging import DiscordMessagingImpl, DiscordMessaging
@@ -13,10 +13,6 @@ def discord_event_handler():
         router=_router(),
         api_authorizer=_api_authorizer()
     )
-
-
-def _api_authorizer():
-    return ApiAuthorizer()
 
 
 def _router() -> Router:
@@ -59,3 +55,7 @@ def _message_provider():
 
 def _dice_roller():
     return DiceRollerImpl()
+
+
+def _api_authorizer():
+    return ApiAuthorizerImpl()
