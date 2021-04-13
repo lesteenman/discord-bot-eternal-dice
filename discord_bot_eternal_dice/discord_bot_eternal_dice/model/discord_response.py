@@ -1,3 +1,4 @@
+import typing
 from enum import Enum
 
 
@@ -7,23 +8,36 @@ class ResponseType(Enum):
     REPLY = 4
 
 
-class DiscordResponse(object):
-    def __init__(self, response_type: ResponseType, content: str = None, allow_role_mentions: bool = False,
-                 allow_user_mentions: bool = False):
+class DiscordEmbed:
+    def __init__(self, title: str, description: str = "", footer: str = "", color: int = None):
+        self.title = title
+        self.description = description
+        self.footer = footer
+        self.color = color
+
+    def to_dict(self) -> typing.Dict:
+        converted = {
+            'title': self.title,
+            'description': self.description,
+            'footer': self.footer,
+        }
+
+        if self.color is not None:
+            converted['color'] = self.color
+
+        return converted
+
+
+class DiscordResponse:
+    def __init__(self, response_type: ResponseType, data: typing.Dict = None):
         self.response_type = response_type
+        self.data = data
 
-        if content is None:
-            self.data = None
-        else:
-            self.data = {
-                'content': content,
-            }
-
-        self.allowed_mention_types = []
-        if allow_user_mentions:
-            self.allowed_mention_types.append('users')
-        if allow_role_mentions:
-            self.allowed_mention_types.append('roles')
+        # self.allowed_mention_types = []
+        # if allow_user_mentions:
+        #     self.allowed_mention_types.append('users')
+        # if allow_role_mentions:
+        #     self.allowed_mention_types.append('roles')
 
     def json(self):
         if self.data is not None:
@@ -52,7 +66,18 @@ class DiscordResponse(object):
     def reply(cls, content: str):
         return DiscordResponse(
             response_type=ResponseType.REPLY,
-            content=content,
+            data={
+                'content': content,
+            },
+        )
+
+    @classmethod
+    def embed_reply(cls, embed: DiscordEmbed):
+        return DiscordResponse(
+            response_type=ResponseType.REPLY,
+            data={
+                'embed': embed.to_dict(),
+            },
         )
 
     # @classmethod

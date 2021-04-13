@@ -6,6 +6,7 @@ from discord_bot_eternal_dice.model.dice_roll import DiceRoll
 from discord_bot_eternal_dice.model.discord_command import DiscordCommand
 from discord_bot_eternal_dice.model.discord_event import DiscordEvent, CommandType
 from discord_bot_eternal_dice.model.discord_member import DiscordMember
+from discord_bot_eternal_dice.model.discord_response import DiscordEmbed
 from discord_bot_eternal_dice.routes import roll
 from discord_bot_eternal_dice.routes.roll import RollRouteImpl
 from discord_bot_eternal_dice.util.dice_roller import DiceRoller
@@ -25,14 +26,15 @@ async def test_roll_number(mock_random_int, roll_min: int, roll_max: int):
     channel_id = 10
     member_name = "Ion"
     rolled_number = 6  # Rolled a dice for this, guaranteed to be random.
-    generated_message = "Ion rolled a 6!"
+
+    generated_embed = DiscordEmbed(title="Erik rolled a bunch of dice!", description="", footer="")
 
     mock_message_provider = MagicMock(MessageProvider)
-    mock_message_provider.roll_number.return_value = generated_message
+    mock_message_provider.roll_number.return_value = generated_embed
 
     roll_route = RollRouteImpl(
         message_provider=mock_message_provider,
-        dice_roller=FakeDiceRoller(-1),
+        dice_roller=FakeDiceRoller(DiceRoll(expression="1d10")),
     )
 
     # And we get a fixed return value (does not matter if it's actually in the range)
@@ -68,7 +70,7 @@ async def test_roll_number(mock_random_int, roll_min: int, roll_max: int):
         number=rolled_number,
     )
 
-    assert response.data['content'] == generated_message
+    assert response.data['embed'] == generated_embed.to_dict()
 
 
 class FakeDiceRoller(DiceRoller):
@@ -84,12 +86,12 @@ async def test_roll_dice():
     channel_id = 10
     member_name = "Charles"
     dice_expression = "1d6+100"
-    generated_message = "Charles rolled 1d6+100: it's a 6!"
+    generated_embed = DiscordEmbed(title="Charles rolled 1d6+100", description="it's a 6!", footer="")
 
     dice_roll = DiceRoll(dice_expression)
 
     mock_message_provider = MagicMock(MessageProvider)
-    mock_message_provider.roll_dice.return_value = generated_message
+    mock_message_provider.roll_dice.return_value = generated_embed
 
     roll_route = RollRouteImpl(
         message_provider=mock_message_provider,
@@ -121,4 +123,4 @@ async def test_roll_dice():
     )
 
     # And the message was sent to the correct channel
-    assert response.data['content'] == generated_message
+    assert response.data['embed'] == generated_embed.to_dict()

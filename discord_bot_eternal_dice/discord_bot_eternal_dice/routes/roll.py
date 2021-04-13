@@ -25,22 +25,22 @@ class RollRouteImpl(RollRoute):
         max_roll = event.command.options['max']
         random_number = random.randint(min_roll, max_roll)
 
-        message = self.message_provider.roll_number(
+        embed = self.message_provider.roll_number(
             member_name=event.member.name,
             roll_min=min_roll,
             roll_max=max_roll,
             number=random_number,
         )
 
-        return DiscordResponse.reply(content=message)
+        return DiscordResponse.embed_reply(embed=embed)
 
     async def dice(self, event: DiscordEvent) -> DiscordResponse:
         expression = event.command.options['expression']
 
         dice_roll = self.dice_roller.roll(expression)
-        message = self.message_provider.roll_dice(
+        embed = self.message_provider.roll_dice(
             member_name=event.member.name,
             dice_roll=dice_roll,
         )
 
-        return DiscordResponse.reply(content=message)
+        return DiscordResponse.embed_reply(embed=embed)
