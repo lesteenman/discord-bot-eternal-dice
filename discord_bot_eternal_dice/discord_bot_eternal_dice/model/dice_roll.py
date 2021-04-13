@@ -1,10 +1,12 @@
 class StaticPartial:
-    def __init__(self, value: int):
+    def __init__(self, expression: str, value: int):
+        self.expression = expression
         self.value = value
 
 
 class DiceRollPartial:
-    def __init__(self, is_negative: bool, number: int, dice_type: int):
+    def __init__(self, expression: str, is_negative: bool, number: int, dice_type: int):
+        self.expression = expression
         self.is_negative = is_negative
         self.number = number
         self.dice_type = dice_type

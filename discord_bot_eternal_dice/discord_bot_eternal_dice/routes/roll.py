@@ -29,7 +29,7 @@ class RollRouteImpl(RollRoute):
             member_name=event.member.name,
             roll_min=min_roll,
             roll_max=max_roll,
-            number=random_number,
+            result=random_number,
         )
 
         return DiscordResponse.embed_reply(embed=embed)

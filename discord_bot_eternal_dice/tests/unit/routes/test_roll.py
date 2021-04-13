@@ -67,7 +67,7 @@ async def test_roll_number(mock_random_int, roll_min: int, roll_max: int):
         member_name=member_name,
         roll_min=roll_min,
         roll_max=roll_max,
-        number=rolled_number,
+        result=rolled_number,
     )
 
     assert response.data['embed'] == generated_embed.to_dict()

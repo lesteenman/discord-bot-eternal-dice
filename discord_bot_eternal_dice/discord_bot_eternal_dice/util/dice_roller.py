@@ -66,6 +66,7 @@ class DiceRollerImpl(DiceRoller):
 
             if num_dice != 0:
                 dice_roll.add(DiceRollPartial(
+                    expression=expression,
                     is_negative=is_negative,
                     number=num_dice,
                     dice_type=type_dice,
@@ -79,4 +80,4 @@ class DiceRollerImpl(DiceRoller):
             if match.group(1) == "-":
                 value = -value
 
-            dice_roll.add(StaticPartial(value))
+            dice_roll.add(StaticPartial(expression=expression, value=value))
