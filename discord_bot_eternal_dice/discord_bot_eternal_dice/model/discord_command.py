@@ -14,15 +14,20 @@ class DiscordCommand:
 
 # Can only handle options with a command, a subcommand an options.
 def command_from_data(event_data):
-    options_data = event_data['options'][0]['options']
+    subcommand_name = None
     options = {}
-    for option in options_data:
-        options[option['name']] = option['value']
+
+    if 'options' in event_data:
+        subcommand_name = event_data['options'][0]['name']
+        if 'options' in event_data['options'][0]:
+            options_data = event_data['options'][0]['options']
+            for option in options_data:
+                options[option['name']] = option['value']
 
     return DiscordCommand(
         command_id=event_data['id'],
         command_name=event_data['name'],
-        subcommand_name=event_data['options'][0]['name'],
+        subcommand_name=subcommand_name,
         options=options,
     )
 

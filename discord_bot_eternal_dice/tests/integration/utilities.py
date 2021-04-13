@@ -21,13 +21,23 @@ def make_discord_event(command: str, subcommand: str, options: typing.List, guil
     event_body['data'] = {
         "id": "2001",
         "name": command,
-        "options": [
+    }
+
+    if subcommand and options:
+        event_body['data']['options'] = [
             {
                 "name": subcommand,
                 "options": options,
             }
         ]
-    }
+    elif subcommand:
+        event_body['data']['options'] = [
+            {
+                'name': subcommand
+            }
+        ]
+    elif options:
+        event_body['data']['options'] = options
 
     return _make_event(event_body)
 

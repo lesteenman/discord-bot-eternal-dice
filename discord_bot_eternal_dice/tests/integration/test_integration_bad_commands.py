@@ -7,29 +7,39 @@ from tests.integration.utilities import create_context, make_discord_event
 
 
 def test_integration_roll_numbers():
-    # An unknown command will reply with an ephemeral channel response
-    response = make_command(command="something_else", subcommand="banana", options=[])
-    assert response['type'] == ResponseType.REPLY.value
-    assert has_ephemeral_message(response)
+    # No subcommand or options
+    response = call_command(command="something_else")
+    assert is_ephemeral_reply(response)
 
-    # An unknown subcommand will reply with an ephemeral channel response
-    response = make_command(command="roll", subcommand="bananas", options=[])
-    assert response['type'] == ResponseType.REPLY.value
-    assert has_ephemeral_message(response)
+    # No options at all
+    response = call_command(command="something_else", subcommand="banana")
+    assert is_ephemeral_reply(response)
 
-    # Missing parameters will return an ephemeral channel response
-    response = make_command(command="roll", subcommand="number", options=[{'name': 'min', 'value': 5}])
-    assert response['type'] == ResponseType.REPLY.value
-    assert has_ephemeral_message(response)
+    # No subcommand or options
+    response = call_command(command="something_else", options=[])
+    assert is_ephemeral_reply(response)
+
+    # An unknown command
+    response = call_command(command="something_else", subcommand="banana", options=[])
+    assert is_ephemeral_reply(response)
+
+    # An unknown subcommand
+    response = call_command(command="roll", subcommand="bananas", options=[])
+    assert is_ephemeral_reply(response)
+
+    # Missing parameters
+    response = call_command(command="roll", subcommand="number", options=[{'name': 'min', 'value': 5}])
+    assert is_ephemeral_reply(response)
 
 
-def has_ephemeral_message(response) -> bool:
-    return is_ephemeral(response) and \
+def is_ephemeral_reply(response) -> bool:
+    return response['type'] == ResponseType.REPLY.value and \
+           is_ephemeral(response) and \
            type(response['data']['content']) == str and \
            len(response['data']['content']) > 0
 
 
-def make_command(command: str, subcommand: str, options: typing.List[typing.Dict]) -> typing.Dict:
+def call_command(command: str, subcommand: str = None, options: typing.List[typing.Dict] = None) -> typing.Dict:
     response = handler.handle_lambda(
         make_discord_event(
             command=command,

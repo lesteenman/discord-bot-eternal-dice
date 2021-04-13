@@ -48,7 +48,7 @@ def register(config: Dict):
                             "name": "expression",
                             "description": "The dice expression, like '1d20+5'.",
                             "type": COMMAND_OPTION_TYPE_STRING,
-                            "required": False,
+                            "required": True,
                         }
                     ],
                 },
