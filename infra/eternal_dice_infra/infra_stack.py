@@ -23,7 +23,7 @@ class InfraStack(core.Stack):
         }
 
         return aws_lambda.Function(
-            self, "DiscordAppFunction",
+            self, "DiscordBotHandler",
             runtime=aws_lambda.Runtime.PYTHON_3_8,
             timeout=core.Duration.seconds(10),
             memory_size=1024,
@@ -39,7 +39,7 @@ class InfraStack(core.Stack):
         }
 
         logs_handler = aws_lambda.Function(
-            self, "eternal-guess-logs-parser",
+            self, "eternal-dice-error-handler",
             runtime=aws_lambda.Runtime.PYTHON_3_7,
             code=code_asset,
             handler="parser.lambda_handler",
@@ -51,8 +51,8 @@ class InfraStack(core.Stack):
         return logs_handler
 
     def create_api(self):
-        api = aws_apigateway.RestApi(self, "eternal-guesses-api",
-                                     rest_api_name="Eternal Guesses API")
+        api = aws_apigateway.RestApi(self, "eternal-dice-api",
+                                     rest_api_name="Eternal Dice Discord Bot API")
         discord_app_integration = aws_apigateway.LambdaIntegration(self.discord_bot_handler)
         discord_resource = api.root.add_resource("discord")
         discord_resource.add_method("POST", discord_app_integration)
@@ -65,17 +65,17 @@ class InfraStack(core.Stack):
         self.subscribe_emails_to_topic(app_errors_sns_topic, self.config['NOTIFICATION_EMAIL'])
 
     def create_sns_topic(self) -> Topic:
-        sns_topic = aws_sns.Topic(self, "eternal-guess-error-topic")
+        sns_topic = aws_sns.Topic(self, "eternal-dice-error-topic")
         return sns_topic
 
     def subscribe_emails_to_topic(self, sns_topic: Topic, email_address: str) -> None:
-        aws_sns.Subscription(self, "eternal-guess-error-subscription",
+        aws_sns.Subscription(self, "eternal-dice-error-subscription",
                              topic=sns_topic,
                              protocol=aws_sns.SubscriptionProtocol.EMAIL,
                              endpoint=email_address)
 
     def subscribe_handler_to_function_logs(self, app_handler, logs_handler):
-        aws_logs.SubscriptionFilter(self, "eternal-guess-handler-subscription-filter",
+        aws_logs.SubscriptionFilter(self, "eternal-dice-handler-subscription-filter",
                                     log_group=app_handler.log_group,
                                     destination=aws_logs_destinations.LambdaDestination(logs_handler),
                                     filter_pattern=aws_logs.FilterPattern.any_term("ERROR", "WARNING"))
