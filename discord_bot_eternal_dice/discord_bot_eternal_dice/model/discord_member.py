@@ -7,6 +7,12 @@ class DiscordMember:
         self.user_id = user_id
         self.nickname = nickname
 
+    @property
+    def name(self):
+        if self.nickname is not None:
+            return self.nickname
+        return self.username
+
 
 def member_from_data(member_data: Dict) -> DiscordMember:
     return DiscordMember(

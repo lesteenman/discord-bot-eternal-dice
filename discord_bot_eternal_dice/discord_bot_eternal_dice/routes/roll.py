@@ -26,7 +26,7 @@ class RollRouteImpl(RollRoute):
         random_number = random.randint(min_roll, max_roll)
 
         message = self.message_provider.roll_number(
-            member_name=event.member.nickname,
+            member_name=event.member.name,
             roll_min=min_roll,
             roll_max=max_roll,
             number=random_number,
@@ -39,7 +39,7 @@ class RollRouteImpl(RollRoute):
 
         dice_roll = self.dice_roller.roll(expression)
         message = self.message_provider.roll_dice(
-            member_name=event.member.nickname,
+            member_name=event.member.name,
             dice_roll=dice_roll,
         )
 

@@ -1,7 +1,6 @@
 from abc import ABC
 
 from discord_bot_eternal_dice.model.dice_roll import DiceRoll, StaticPartial, DiceRollPartial
-from discord_bot_eternal_dice.util.dice_roller import DiceRollerImpl
 
 
 class MessageProvider(ABC):
@@ -14,7 +13,7 @@ class MessageProvider(ABC):
 
 class MessageProviderImpl(MessageProvider):
     def roll_number(self, member_name: str, roll_min: int, roll_max: int, number: int) -> str:
-        return f"{member_name} rolled a random number between {roll_min} and {roll_max}...\n\nIt's a *{number}*!"
+        return f"{member_name} rolled a random number between {roll_min} and {roll_max}...\n\nIt's a **{number}**!"
 
     def roll_dice(self, member_name: str, dice_roll: DiceRoll) -> str:
         rolls = []
@@ -33,14 +32,5 @@ class MessageProviderImpl(MessageProvider):
         if roll_expression[0] == "+":
             roll_expression = roll_expression[1:]
 
-        return f"{member_name} rolled _{dice_roll.expression}_ for a total of *{dice_roll.result}* ({roll_expression})"
-
-
-if __name__ == '__main__':
-    provider = MessageProviderImpl()
-    dice_roller = DiceRollerImpl()
-
-    print(provider.roll_dice(
-        "Erik",
-        dice_roller.roll("1d100+3"),
-    ))
+        return f"{member_name} rolled *{dice_roll.expression}* for a total of **{dice_roll.result}** " \
+               f"({roll_expression})"
