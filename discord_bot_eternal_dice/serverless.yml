@@ -1,0 +1,28 @@
+service: discord-bot-eternal-dice
+frameworkVersion: ^2.21.1
+
+provider:
+  name: aws
+  runtime: python3.8
+  lambdaHashingVersion: 20201221
+
+functions:
+  numpy:
+    handler: discord_bot_eternal_dice.handler.lambda_handler
+
+plugins:
+  - serverless-python-requirements
+
+package:
+  exclude:
+    - tests/**
+    - .venv/**
+
+custom:
+  pythonRequirements:
+    dockerizePip: non-linux
+    usePoetry: true
+    slim: true
+    useStaticCache: true
+    useDownloadCache: true
+    cacheLocation: .serverless/cache

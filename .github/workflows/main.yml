@@ -76,26 +76,41 @@ jobs:
         with:
           path: |
             discord_bot_eternal_dice/.venv
+            discord_bot_eternal_dice/.serverless/cache
           key: venv-${{ runner.os }}-${{ hashFiles('discord_bot_eternal_dice/poetry.lock') }}
 
       - name: Poetry install for discord_bot_eternal_dice/
         run: cd discord_bot_eternal_dice && poetry install
         if: steps.cached-discord-bot-eternal-dice-poetry.outputs.cache-hit != 'true'
 
-      - name: Package projects
-        run: make package
+      - name: Load cached node modules
+        id: cached-node-modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules/
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Npm install
+        run: npm install
+        if: steps.cached-node-modules.outputs.cache-hit != 'true'
+
+      - name: Package the bot
+        run: cd discord_bot_eternal_dice && npx serverless package
+
+      - name: Package the error handler
+        run: cd error_handler && npx serverless package
 
       - name: Create artifact for discord_bot_eternal_dice
         uses: actions/upload-artifact@v2
         with:
           name: discord_bot_eternal_dice_package
-          path: discord_bot_eternal_dice/.build/discord_bot_eternal_dice.zip
+          path: discord_bot_eternal_dice/.serverless/discord-bot-eternal-dice.zip
 
       - name: Create artifact for the error_handler
         uses: actions/upload-artifact@v2
         with:
           name: error_handler_package
-          path: error_handler/.build/error_handler.zip
+          path: error_handler/.serverless/error-handler.zip
 
       - name: Create artifact for the infra module
         uses: actions/upload-artifact@v2
@@ -116,13 +131,13 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: discord_bot_eternal_dice_package
-          path: discord_bot_eternal_dice/.build/
+          path: discord_bot_eternal_dice/.serverless/
 
       - name: Restore the artifact for the error_handler
         uses: actions/download-artifact@v2
         with:
           name: error_handler_package
-          path: error_handler/.build/
+          path: error_handler/.serverless/
 
       - name: Install Python 3.8
         uses: actions/setup-python@v1

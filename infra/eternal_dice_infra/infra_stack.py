@@ -28,13 +28,13 @@ class InfraStack(core.Stack):
             runtime=aws_lambda.Runtime.PYTHON_3_8,
             timeout=core.Duration.seconds(10),
             memory_size=1024,
-            code=aws_lambda.Code.from_asset("../discord_bot_eternal_dice/.build/discord_bot_eternal_dice.zip"),
+            code=aws_lambda.Code.from_asset("../discord_bot_eternal_dice/.serverless/discord-bot-eternal-dice.zip"),
             handler="discord_bot_eternal_dice.handler.handle_lambda",
             environment=environment
         )
 
     def create_logs_handler(self, topic: Topic) -> Function:
-        code_asset = aws_lambda.Code.from_asset("../error_handler/.build/error_handler.zip")
+        code_asset = aws_lambda.Code.from_asset("../error_handler/.serverless/error-handler.zip")
         environment = {
             'snsARN': topic.topic_arn,
         }
