@@ -20,6 +20,7 @@ class DiscordEmbed:
             'title': self.title,
             'description': self.description,
             'footer': self.footer,
+            'type': 'rich',
         }
 
         if self.color is not None:
