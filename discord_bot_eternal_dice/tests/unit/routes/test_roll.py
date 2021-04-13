@@ -70,7 +70,7 @@ async def test_roll_number(mock_random_int, roll_min: int, roll_max: int):
         result=rolled_number,
     )
 
-    assert response.data['embed'] == generated_embed.to_dict()
+    assert response.data['embeds'][0] == generated_embed.to_dict()
 
 
 class FakeDiceRoller(DiceRoller):
@@ -123,4 +123,4 @@ async def test_roll_dice():
     )
 
     # And the message was sent to the correct channel
-    assert response.data['embed'] == generated_embed.to_dict()
+    assert response.data['embeds'][0] == generated_embed.to_dict()

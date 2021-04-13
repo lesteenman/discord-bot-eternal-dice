@@ -76,7 +76,7 @@ class DiscordResponse:
         return DiscordResponse(
             response_type=ResponseType.REPLY,
             data={
-                'embed': embed.to_dict(),
+                'embeds': [embed.to_dict()],
             },
         )
 

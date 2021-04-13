@@ -49,6 +49,7 @@ def roll_random_number(min_roll: int, max_roll: int):
     )
 
     assert response['statusCode'] == 200
+    print(response['body'])
 
 
 def roll_dice(expression: str):
@@ -66,6 +67,7 @@ def roll_dice(expression: str):
     )
 
     assert response['statusCode'] == 200
+    print(response['body'])
 
 
 def make_discord_event(roll_type: str, options: typing.List, guild_id: int = DEFAULT_GUILD_ID,
