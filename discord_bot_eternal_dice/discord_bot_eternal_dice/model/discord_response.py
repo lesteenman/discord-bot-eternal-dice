@@ -19,7 +19,9 @@ class DiscordEmbed:
         converted = {
             'title': self.title,
             'description': self.description,
-            'footer': self.footer,
+            'footer': {
+                'text': self.footer,
+            },
             'type': 'rich',
         }
 
