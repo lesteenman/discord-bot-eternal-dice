@@ -36,12 +36,6 @@ class DiscordResponse:
         self.response_type = response_type
         self.data = data
 
-        # self.allowed_mention_types = []
-        # if allow_user_mentions:
-        #     self.allowed_mention_types.append('users')
-        # if allow_role_mentions:
-        #     self.allowed_mention_types.append('roles')
-
     def json(self):
         if self.data is not None:
             return {

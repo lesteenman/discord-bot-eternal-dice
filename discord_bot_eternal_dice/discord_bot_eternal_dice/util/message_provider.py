@@ -28,9 +28,6 @@ class MessageProviderImpl(MessageProvider):
         for part in dice_roll.parts:
             if type(part) is StaticPartial:
                 rolls.append(part.expression)
-                if part.value >= 0:
-                    rolls.append("+")
-                rolls.append(str(part.value))
             elif type(part) is DiceRollPartial:
                 sub_rolls = []
                 for result in part.results:
@@ -46,7 +43,6 @@ class MessageProviderImpl(MessageProvider):
                 rolls.append(f"({sub})")
 
         roll_expression = "".join(rolls)
-
         if roll_expression[0] == "+":
             roll_expression = roll_expression[1:]
 
