@@ -1,8 +1,7 @@
-from unittest.mock import patch, AsyncMock, MagicMock
+from unittest.mock import patch, MagicMock
 
 import pytest
 
-from discord_bot_eternal_dice.discord_messaging import DiscordMessaging
 from discord_bot_eternal_dice.model.dice_roll import DiceRoll
 from discord_bot_eternal_dice.model.discord_command import DiscordCommand
 from discord_bot_eternal_dice.model.discord_event import DiscordEvent, CommandType
@@ -31,11 +30,8 @@ async def test_roll_number(mock_random_int, roll_min: int, roll_max: int):
     mock_message_provider = MagicMock(MessageProvider)
     mock_message_provider.roll_number.return_value = generated_message
 
-    mock_discord_messaging = AsyncMock(DiscordMessaging)
-
     roll_route = RollRouteImpl(
         message_provider=mock_message_provider,
-        discord_messaging=mock_discord_messaging,
         dice_roller=FakeDiceRoller(-1),
     )
 
@@ -59,7 +55,7 @@ async def test_roll_number(mock_random_int, roll_min: int, roll_max: int):
             nickname=member_name,
         )
     )
-    await roll_route.number(event)
+    response = await roll_route.number(event)
 
     # Then a random number was called
     mock_random_int.assert_called_with(roll_min, roll_max)
@@ -72,11 +68,7 @@ async def test_roll_number(mock_random_int, roll_min: int, roll_max: int):
         number=rolled_number,
     )
 
-    # And the message was sent to the correct channel
-    mock_discord_messaging.send_channel_message.assert_called_with(
-        channel_id=channel_id,
-        text=generated_message,
-    )
+    assert response.data['content'] == generated_message
 
 
 class FakeDiceRoller(DiceRoller):
@@ -99,11 +91,8 @@ async def test_roll_dice():
     mock_message_provider = MagicMock(MessageProvider)
     mock_message_provider.roll_dice.return_value = generated_message
 
-    mock_discord_messaging = AsyncMock(DiscordMessaging)
-
     roll_route = RollRouteImpl(
         message_provider=mock_message_provider,
-        discord_messaging=mock_discord_messaging,
         dice_roller=FakeDiceRoller(dice_roll),
     )
 
@@ -123,7 +112,7 @@ async def test_roll_dice():
             nickname=member_name,
         )
     )
-    await roll_route.dice(event)
+    response = await roll_route.dice(event)
 
     # Then the message was generated correctly
     mock_message_provider.roll_dice.assert_called_with(
@@ -132,7 +121,4 @@ async def test_roll_dice():
     )
 
     # And the message was sent to the correct channel
-    mock_discord_messaging.send_channel_message.assert_called_with(
-        channel_id=channel_id,
-        text=generated_message,
-    )
+    assert response.data['content'] == generated_message

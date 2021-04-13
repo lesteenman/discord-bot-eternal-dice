@@ -1,7 +1,6 @@
 from discord_bot_eternal_dice.api.api_authorizer import ApiAuthorizerImpl
 from discord_bot_eternal_dice.api.discord_event_handler import DiscordEventHandler
 from discord_bot_eternal_dice.api.router import Router, RouterImpl
-from discord_bot_eternal_dice.discord_messaging import DiscordMessagingImpl, DiscordMessaging
 from discord_bot_eternal_dice.routes.ping import PingRoute
 from discord_bot_eternal_dice.routes.roll import RollRouteImpl
 from discord_bot_eternal_dice.util.dice_roller import DiceRoller, DiceRollerImpl
@@ -17,13 +16,11 @@ def discord_event_handler():
 
 def _router() -> Router:
     message_provider = _message_provider()
-    discord_messaging = _discord_messaging()
     dice_roller = _dice_roller()
 
     ping_route = _ping_route()
     roll_route = _roll_route(
         message_provider=message_provider,
-        discord_messaging=discord_messaging,
         dice_roller=dice_roller,
     )
 
@@ -37,16 +34,11 @@ def _ping_route():
     return PingRoute()
 
 
-def _roll_route(message_provider: MessageProvider, discord_messaging: DiscordMessaging, dice_roller: DiceRoller):
+def _roll_route(message_provider: MessageProvider, dice_roller: DiceRoller):
     return RollRouteImpl(
         message_provider=message_provider,
-        discord_messaging=discord_messaging,
         dice_roller=dice_roller,
     )
-
-
-def _discord_messaging():
-    return DiscordMessagingImpl()
 
 
 def _message_provider():

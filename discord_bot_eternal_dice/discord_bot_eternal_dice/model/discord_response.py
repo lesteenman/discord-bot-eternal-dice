@@ -4,14 +4,20 @@ from enum import Enum
 class ResponseType(Enum):
     PONG = 1
     ACKNOWLEDGE = 2
-    # ACKNOWLEDGE_WITH_SOURCE = 5
+    REPLY = 4
 
 
 class DiscordResponse(object):
     def __init__(self, response_type: ResponseType, content: str = None, allow_role_mentions: bool = False,
                  allow_user_mentions: bool = False):
         self.response_type = response_type
-        self.content = content
+
+        if content is None:
+            self.data = None
+        else:
+            self.data = {
+                'content': content,
+            }
 
         self.allowed_mention_types = []
         if allow_user_mentions:
@@ -20,9 +26,15 @@ class DiscordResponse(object):
             self.allowed_mention_types.append('roles')
 
     def json(self):
-        return {
-            'type': self.response_type.value
-        }
+        if self.data is not None:
+            return {
+                'type': self.response_type.value,
+                'data': self.data,
+            }
+        else:
+            return {
+                'type': self.response_type.value,
+            }
 
     @classmethod
     def pong(cls):
@@ -34,6 +46,13 @@ class DiscordResponse(object):
     def acknowledge(cls):
         return DiscordResponse(
             response_type=ResponseType.ACKNOWLEDGE
+        )
+
+    @classmethod
+    def reply(cls, content: str):
+        return DiscordResponse(
+            response_type=ResponseType.REPLY,
+            content=content,
         )
 
     # @classmethod

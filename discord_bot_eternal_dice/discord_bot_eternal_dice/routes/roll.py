@@ -1,7 +1,6 @@
 import random
 from abc import ABC
 
-from discord_bot_eternal_dice.discord_messaging import DiscordMessaging
 from discord_bot_eternal_dice.model.discord_event import DiscordEvent
 from discord_bot_eternal_dice.model.discord_response import DiscordResponse
 from discord_bot_eternal_dice.util.dice_roller import DiceRoller
@@ -17,9 +16,8 @@ class RollRoute(ABC):
 
 
 class RollRouteImpl(RollRoute):
-    def __init__(self, message_provider: MessageProvider, discord_messaging: DiscordMessaging, dice_roller: DiceRoller):
+    def __init__(self, message_provider: MessageProvider, dice_roller: DiceRoller):
         self.message_provider = message_provider
-        self.discord_messaging = discord_messaging
         self.dice_roller = dice_roller
 
     async def number(self, event: DiscordEvent) -> DiscordResponse:
@@ -34,12 +32,7 @@ class RollRouteImpl(RollRoute):
             number=random_number,
         )
 
-        await self.discord_messaging.send_channel_message(
-            channel_id=event.channel_id,
-            text=message,
-        )
-
-        return DiscordResponse.acknowledge()
+        return DiscordResponse.reply(content=message)
 
     async def dice(self, event: DiscordEvent) -> DiscordResponse:
         expression = event.command.options['expression']
@@ -50,9 +43,4 @@ class RollRouteImpl(RollRoute):
             dice_roll=dice_roll,
         )
 
-        await self.discord_messaging.send_channel_message(
-            channel_id=event.channel_id,
-            text=message,
-        )
-
-        return DiscordResponse.acknowledge()
+        return DiscordResponse.reply(content=message)

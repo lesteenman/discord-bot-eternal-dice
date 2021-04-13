@@ -35,5 +35,5 @@ def stub_discord_messaging(mocker):
             logger.info(f"[stub send_dm] member_id={member.user_id} text={text}")
             pass
 
-    silent_discord_messaging = SilentDiscordMessaging()
-    mocker.patch('discord_bot_eternal_dice.injector._discord_messaging', return_value=silent_discord_messaging)
+    # silent_discord_messaging = SilentDiscordMessaging()
+    # mocker.patch('discord_bot_eternal_dice.injector._discord_messaging', return_value=silent_discord_messaging)

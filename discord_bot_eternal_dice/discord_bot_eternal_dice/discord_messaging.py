@@ -1,3 +1,4 @@
+import asyncio
 import contextlib
 from abc import ABC
 
@@ -70,3 +71,20 @@ class DiscordMessagingImpl(DiscordMessaging):
             yield client
         finally:
             await client.close()
+
+
+async def test_main():
+    discord_bot_token = "ODMxMjAyNTIzMDcxMTE5NDIx.YHRzrA.N_McMWcSnnd8LDrDxPRAXDvgEZQ"
+    channel_id = 831436918092070942
+    text = "Hi! This is a testing message."
+
+    client = discord.Client()
+    await client.login(discord_bot_token, bot=True)
+    text_channel = await client.fetch_channel(channel_id)
+    channel_message = await text_channel.send(content=text, allowed_mentions=AllowedMentions.none())
+    print(f"Sent {channel_message}")
+
+
+if __name__ == '__main__':
+    response = asyncio.get_event_loop() \
+        .run_until_complete(test_main())
