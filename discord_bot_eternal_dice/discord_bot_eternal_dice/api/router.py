@@ -1,13 +1,16 @@
 from abc import ABC
 
+import typing
 from loguru import logger
 
 from discord_bot_eternal_dice.errors.discord_event_disallowed_error import DiscordEventDisallowedError
 from discord_bot_eternal_dice.model.discord_event import DiscordEvent, CommandType, DiscordCommand
 from discord_bot_eternal_dice.model.discord_response import DiscordResponse
+from discord_bot_eternal_dice.model.discord_route import DiscordRoute
 from discord_bot_eternal_dice.model.lambda_response import LambdaResponse
 from discord_bot_eternal_dice.routes.ping import PingRoute
 from discord_bot_eternal_dice.routes.roll import RollRoute
+from discord_bot_eternal_dice.util.message_provider import MessageProvider
 
 
 class UnknownEventException(Exception):
@@ -27,7 +30,8 @@ class Router(ABC):
 
 
 class RouterImpl(Router):
-    def __init__(self, ping_route: PingRoute = None, roll_route: RollRoute = None):
+    def __init__(self, message_provider: MessageProvider, ping_route: PingRoute, roll_route: RollRoute):
+        self.message_provider = message_provider
         self.ping_route = ping_route
         self.roll_route = roll_route
 
@@ -36,8 +40,10 @@ class RouterImpl(Router):
 
     def register_routes(self):
         self.add_route(command_type=CommandType.PING, handler=self.ping_route.call)
-        self.add_route(command='roll', subcommand='number', handler=self.roll_route.number)
-        self.add_route(command='roll', subcommand='dice', handler=self.roll_route.dice)
+        self.add_route(command='roll', subcommand='number',
+                       options={'min': int, 'max': int}, handler=self.roll_route.number)
+        self.add_route(command='roll', subcommand='dice',
+                       options={'expression': str}, handler=self.roll_route.dice)
 
     async def route(self, event: DiscordEvent) -> LambdaResponse:
         if event.type is CommandType.PING:
@@ -59,26 +65,20 @@ class RouterImpl(Router):
     async def _handle_command(self, event: DiscordEvent) -> DiscordResponse:
         for route in self.routes:
             if route.matches(event):
+                if not route.validate(event.command):
+                    return DiscordResponse.ephemeral_reply(self.message_provider.command_usage(route))
+
                 return await route.handler(event)
 
+        return DiscordResponse.ephemeral_reply(self.message_provider.unknown_command(event.command))
+
     def add_route(self, handler, command_type: CommandType = CommandType.COMMAND, command: str = None,
-                  subcommand: str = None):
-        route = DiscordRoute(command_type=command_type, command=command, subcommand=subcommand, handler=handler)
+                  subcommand: str = None, options: typing.Dict = None):
+        route = DiscordRoute(
+            command_type=command_type,
+            command=command,
+            subcommand=subcommand,
+            options=options,
+            handler=handler
+        )
         self.routes.append(route)
-
-
-class DiscordRoute:
-    def __init__(self, handler, command_type: CommandType, command: str, subcommand: str = None):
-        self.handler = handler
-        self.command_type = command_type
-        self.subcommand = subcommand
-        self.command = command
-
-    def matches(self, event: DiscordEvent) -> bool:
-        if event.command.command_name != self.command:
-            return False
-
-        if event.command.subcommand_name is not None and event.command.subcommand_name != self.subcommand:
-            return False
-
-        return True

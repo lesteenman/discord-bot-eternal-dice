@@ -25,6 +25,7 @@ def _router() -> Router:
     )
 
     return RouterImpl(
+        message_provider=message_provider,
         roll_route=roll_route,
         ping_route=ping_route,
     )

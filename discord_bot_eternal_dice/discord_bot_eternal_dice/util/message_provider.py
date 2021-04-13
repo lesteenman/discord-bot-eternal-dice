@@ -1,6 +1,8 @@
 from abc import ABC
 
+from discord_bot_eternal_dice.api.router import DiscordRoute
 from discord_bot_eternal_dice.model.dice_roll import DiceRoll, StaticPartial, DiceRollPartial
+from discord_bot_eternal_dice.model.discord_command import DiscordCommand
 from discord_bot_eternal_dice.model.discord_response import DiscordEmbed
 
 COLOR_ETERNAL_BLUE = 0x9af5f4
@@ -12,6 +14,22 @@ class MessageProvider(ABC):
 
     def roll_dice(self, member_name: str, dice_roll: DiceRoll) -> DiscordEmbed:
         pass
+
+    def unknown_command(self, command: DiscordCommand) -> str:
+        pass
+
+    def command_usage(self, route: DiscordRoute) -> str:
+        pass
+
+
+def format_option(option, option_type):
+    if option_type is int:
+        return f"{option}:<number>"
+
+    if option_type is str:
+        return f"{option}:<text>"
+
+    raise ValueError(f"unhandled option_type: {option_type}")
 
 
 class MessageProviderImpl(MessageProvider):
@@ -60,3 +78,10 @@ class MessageProviderImpl(MessageProvider):
                 footer=f"The dice rolled: {roll_expression}",
                 color=COLOR_ETERNAL_BLUE,
             )
+
+    def unknown_command(self, command: DiscordCommand) -> str:
+        return f"Unknown command: '/{command.command_name} {command.subcommand_name}'."
+
+    def command_usage(self, route: DiscordRoute) -> str:
+        options = " ".join([format_option(option, option_type) for option, option_type in route.options.items()])
+        return f"Usage: '/{route.command} {route.subcommand} {options}'"

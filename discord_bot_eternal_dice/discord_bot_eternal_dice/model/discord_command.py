@@ -12,21 +12,19 @@ class DiscordCommand:
         self.options = options
 
 
+# Can only handle options with a command, a subcommand an options.
 def command_from_data(event_data):
-    if event_data['name'] == "roll":
-        options_data = event_data['options'][0]['options']
-        options = {}
-        for option in options_data:
-            options[option['name']] = option['value']
+    options_data = event_data['options'][0]['options']
+    options = {}
+    for option in options_data:
+        options[option['name']] = option['value']
 
-        return DiscordCommand(
-            command_id=event_data['id'],
-            command_name=event_data['name'],
-            subcommand_name=event_data['options'][0]['name'],
-            options=options,
-        )
-
-    raise UnknownCommandError(event_data)
+    return DiscordCommand(
+        command_id=event_data['id'],
+        command_name=event_data['name'],
+        subcommand_name=event_data['options'][0]['name'],
+        options=options,
+    )
 
 
 def _guess_command_from_data(event_data: Dict) -> DiscordCommand:

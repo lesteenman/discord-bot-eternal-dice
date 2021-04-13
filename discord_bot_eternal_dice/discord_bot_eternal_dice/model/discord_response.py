@@ -1,34 +1,13 @@
 import typing
 from enum import Enum
 
+from discord_bot_eternal_dice.model.discord_embed import DiscordEmbed
+
 
 class ResponseType(Enum):
     PONG = 1
     ACKNOWLEDGE = 2
     REPLY = 4
-
-
-class DiscordEmbed:
-    def __init__(self, title: str, description: str = "", footer: str = "", color: int = None):
-        self.title = title
-        self.description = description
-        self.footer = footer
-        self.color = color
-
-    def to_dict(self) -> typing.Dict:
-        converted = {
-            'title': self.title,
-            'description': self.description,
-            'footer': {
-                'text': self.footer,
-            },
-            'type': 'rich',
-        }
-
-        if self.color is not None:
-            converted['color'] = self.color
-
-        return converted
 
 
 class DiscordResponse:
@@ -77,8 +56,12 @@ class DiscordResponse:
             },
         )
 
-    # @classmethod
-    # def acknowledge_with_source(cls):
-    #     return DiscordResponse(
-    #         response_type=ResponseType.ACKNOWLEDGE_WITH_SOURCE
-    #     )
+    @classmethod
+    def ephemeral_reply(cls, message):
+        return DiscordResponse(
+            response_type=ResponseType.REPLY,
+            data={
+                'content': message,
+                'flags': 64,
+            }
+        )
