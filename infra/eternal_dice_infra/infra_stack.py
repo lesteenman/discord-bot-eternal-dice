@@ -11,7 +11,6 @@ class InfraStack(core.Stack):
         super().__init__(scope, construct_id, **kwargs)
 
         self.config = config.config
-        self.create_discord_slash_commands()
         self.discord_bot_handler = self.create_app_handler()
         self.create_error_handler()
         self.create_api()
@@ -80,6 +79,3 @@ class InfraStack(core.Stack):
                                     log_group=app_handler.log_group,
                                     destination=aws_logs_destinations.LambdaDestination(logs_handler),
                                     filter_pattern=aws_logs.FilterPattern.any_term("ERROR", "WARNING"))
-
-    def create_discord_slash_commands(self):
-        pass

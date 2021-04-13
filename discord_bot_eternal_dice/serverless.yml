@@ -7,8 +7,8 @@ provider:
   lambdaHashingVersion: 20201221
 
 functions:
-  numpy:
-    handler: discord_bot_eternal_dice.handler.lambda_handler
+  discord_bot_eternal_dice:
+    handler: discord_bot_eternal_dice.handler.handle_lambda
 
 plugins:
   - serverless-python-requirements
