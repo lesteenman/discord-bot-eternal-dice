@@ -10,16 +10,16 @@ COLOR_ETERNAL_BLUE = 0x9af5f4
 
 class MessageProvider(ABC):
     def roll_number(self, member_name: str, roll_min: int, roll_max: int, result: int) -> DiscordEmbed:
-        pass
+        raise NotImplementedError()
 
     def roll_dice(self, member_name: str, dice_roll: DiceRoll) -> DiscordEmbed:
-        pass
+        raise NotImplementedError()
 
     def unknown_command(self, command: DiscordCommand) -> str:
-        pass
+        raise NotImplementedError()
 
     def command_usage(self, route: DiscordRoute) -> str:
-        pass
+        raise NotImplementedError()
 
 
 def format_option(option, option_type):

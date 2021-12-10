@@ -9,10 +9,10 @@ from discord_bot_eternal_dice.util.message_provider import MessageProvider
 
 class RollRoute(ABC):
     async def number(self, event: DiscordEvent) -> DiscordResponse:
-        pass
+        raise NotImplementedError()
 
     async def dice(self, event: DiscordEvent) -> DiscordResponse:
-        pass
+        raise NotImplementedError()
 
 
 class RollRouteImpl(RollRoute):

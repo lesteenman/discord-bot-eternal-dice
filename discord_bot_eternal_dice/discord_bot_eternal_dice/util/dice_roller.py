@@ -11,7 +11,7 @@ EXTRA_MATCHER = re.compile("([+-])?([0-9]+)")
 
 class DiceRoller(ABC):
     def roll(self, expression: str) -> DiceRoll:
-        pass
+        raise NotImplementedError()
 
 
 class DiceRollerImpl(DiceRoller):

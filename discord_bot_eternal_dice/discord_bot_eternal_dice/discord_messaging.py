@@ -11,16 +11,13 @@ from discord_bot_eternal_dice.util import app_config
 
 class DiscordMessaging(ABC):
     async def send_channel_message(self, channel_id: int, text: str) -> int:
-        logger.warning("Using an ABC method!")
-        return -1
+        raise NotImplementedError()
 
     async def update_channel_message(self, channel_id: int, message_id: int, text: str):
-        logger.warning("Using an ABC method!")
-        pass
+        raise NotImplementedError()
 
     async def send_dm(self, member: DiscordMember, text: str):
-        logger.warning("Using an ABC method!")
-        pass
+        raise NotImplementedError()
 
 
 class DiscordMessagingImpl(DiscordMessaging):
