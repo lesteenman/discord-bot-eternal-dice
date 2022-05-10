@@ -101,19 +101,19 @@ jobs:
         run: cd error_handler && npx serverless package
 
       - name: Create artifact for discord_bot_eternal_dice
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: discord_bot_eternal_dice_package
           path: discord_bot_eternal_dice/.serverless/discord-bot-eternal-dice.zip
 
       - name: Create artifact for the error_handler
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: error_handler_package
           path: error_handler/.serverless/error-handler.zip
 
       - name: Create artifact for the infra module
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: infra
           path: infra/
