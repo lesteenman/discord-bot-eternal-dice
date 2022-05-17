@@ -6,7 +6,7 @@ authors = ["lesteenman <lesteenman@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-discord-interactions = "^0.3.0"
+discord-interactions = "^0.4.0"
 loguru = "^0.6.0"
 "discord.py" = "^1.7.1"
 
