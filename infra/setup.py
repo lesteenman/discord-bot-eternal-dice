@@ -19,7 +19,7 @@ setuptools.setup(
     packages=setuptools.find_packages(where="eternal_dice_infra"),
 
     install_requires=[
-        "aws-cdk.core==1.85.0",
+        "aws-cdk.core==1.204.0",
     ],
 
     python_requires=">=3.6",
